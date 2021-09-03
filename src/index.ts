@@ -48,14 +48,13 @@ function generateParamAssignment(params: URLSearchParams, language: String): Str
 
 function activateExtension(app: JupyterFrontEnd, notebooks: INotebookTracker) : void {
   console.log('JupyterLab extension jupyterlab-notebookparams is activated!');
-
+  let searchParams = new URL(window.location.href).searchParams;
+  
   notebooks.widgetAdded.connect((sender, panel: NotebookPanel) => {
-
     panel.sessionContext.ready.then(() => {
       for(let i = 0; i < panel.model.cells.length; i++) {
         let cell = panel.model.cells.get(i);
         if(cell.value.text.startsWith(PARAM_CELL_PARAMETERS)) {
-          let searchParams = new URL(window.location.href).searchParams;
           let text = generateParamAssignment(searchParams,panel.model.defaultKernelLanguage);
           if (text) {
             cell.value.text = PARAM_CELL_PARAMETERS + '\n' + text;
